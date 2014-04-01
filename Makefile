@@ -30,6 +30,9 @@ bwamem-lite:libbwa.a example.o
 libbwa.a:$(LOBJS)
 		$(AR) -csru $@ $(LOBJS)
 
+test:
+
+
 clean:
 		rm -f gmon.out *.o a.out $(PROG) *~ *.a
 
