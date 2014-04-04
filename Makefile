@@ -10,8 +10,8 @@ AOBJS=		QSufSort.o bwt_gen.o bwase.o bwaseqio.o bwtgap.o bwtaln.o bamlite.o \
 			bwtsw2_core.o bwtsw2_main.o bwtsw2_aux.o bwt_lite.o \
 			bwtsw2_chain.o fastmap.o bwtsw2_pair.o
 PROG=		bwa
-INCLUDES=	
-LIBS=		-lm -lz -lpthread
+INCLUDES=-Izlib-1.2.8/
+LIBS=		-lm zlib-1.2.8/libz.a -lpthread
 SUBDIRS=	.
 
 .SUFFIXES:.c .o .cc
@@ -21,8 +21,13 @@ SUBDIRS=	.
 
 all:$(PROG)
 
-bwa:libbwa.a $(AOBJS) main.o
+bwa: zlib-1.2.8/libz.a libbwa.a $(AOBJS) main.o
 		$(CC) $(CFLAGS) $(DFLAGS) $(AOBJS) main.o -o $@ -L. -lbwa $(LIBS)
+
+zlib-1.2.8/libz.a:
+	curl "http://zlib.net/zlib-1.2.8.tar.gz" > zlib-1.2.8.tar.gz
+	tar xvzf zlib-1.2.8.tar.gz
+	cd zlib-1.2.8; ./configure; make -j
 
 bwamem-lite:libbwa.a example.o
 		$(CC) $(CFLAGS) $(DFLAGS) example.o -o $@ -L. -lbwa $(LIBS)
@@ -35,6 +40,7 @@ test:
 
 clean:
 		rm -f gmon.out *.o a.out $(PROG) *~ *.a
+		rm -rf zlib-1.2.8*
 
 depend:
 	( LC_ALL=C ; export LC_ALL; makedepend -Y -- $(CFLAGS) $(DFLAGS) -- *.c )
